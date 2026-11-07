@@ -1,0 +1,91 @@
+
+package com.klef.soa.exam.repository;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import com.klef.soa.exam.entity.Asset;
+
+@DataJpaTest
+public class AssetRepositoryTest {
+
+    @Autowired
+    private AssetRepository repository;
+
+    @Test
+    public void testSaveAsset() {
+        Asset asset = new Asset();
+        asset.setName("Laptop");
+        asset.setType("Electronics");
+        asset.setStatus("Available");
+        asset.setLocation("Lab1");
+
+        Asset saved = repository.save(asset);
+
+        assertNotNull(saved.getId());
+    }
+
+    @Test
+    public void testFindByName() {
+        Asset asset = new Asset();
+        asset.setName("Laptop");
+        asset.setType("Electronics");
+        asset.setStatus("Available");
+        asset.setLocation("Lab1");
+
+        repository.save(asset);
+
+        List<Asset> result = repository.findByName("Laptop");
+
+        assertFalse(result.isEmpty());
+        assertEquals("Laptop", result.get(0).getName());
+    }
+
+    @Test
+    public void testFindByType() {
+        Asset asset = new Asset();
+        asset.setName("Computer");
+        asset.setType("Electronics");
+        asset.setStatus("Available");
+        asset.setLocation("Lab2");
+
+        repository.save(asset);
+
+        List<Asset> result = repository.findByType("Electronics");
+
+        assertFalse(result.isEmpty());
+        assertEquals("Electronics", result.get(0).getType());
+    }
+
+    @Test
+    public void testFindById() {
+        Asset asset = new Asset();
+        asset.setName("Printer");
+        asset.setType("Office");
+        asset.setStatus("Available");
+        asset.setLocation("Lab3");
+
+        Asset saved = repository.save(asset);
+
+        assertTrue(repository.findById(saved.getId()).isPresent());
+    }
+
+    @Test
+    public void testDeleteAsset() {
+        Asset asset = new Asset();
+        asset.setName("Monitor");
+        asset.setType("Electronics");
+        asset.setStatus("Available");
+        asset.setLocation("Lab4");
+
+        Asset saved = repository.save(asset);
+        repository.deleteById(saved.getId());
+
+        assertFalse(repository.findById(saved.getId()).isPresent());
+    }
+}
